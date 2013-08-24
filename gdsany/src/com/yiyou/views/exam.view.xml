@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Property name="metaData">
+    <Property name="securityTag">public</Property>
+  </Property>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="ExamBO">
+      <Property name="creationType">com.haiyisoft.entity.ExamBO</Property>
+      <PropertyDef name="examId">
+        <Property name="dataType">String</Property>
+        <Property name="required">true</Property>
+        <Property name="label">考试编号</Property>
+        <Validator type="length">
+          <Property name="maxLength">8</Property>
+          <Property name="resultMessage">考试代码最多为8位数</Property>
+        </Validator>
+      </PropertyDef>
+      <PropertyDef name="term">
+        <Property name="dataType">TermBO</Property>
+        <Property name="required">true</Property>
+        <Property name="label">学期</Property>
+      </PropertyDef>
+      <PropertyDef name="examName">
+        <Property name="dataType">String</Property>
+        <Property name="label">考试名称</Property>
+        <Property name="required">true</Property>
+        <Validator type="length">
+          <Property name="maxLength">60</Property>
+          <Property name="resultMessage">考试名称不能多余60</Property>
+        </Validator>
+      </PropertyDef>
+      <PropertyDef name="beginTime">
+        <Property name="label">开始时间</Property>
+        <Property name="dataType">Date</Property>
+        <Property name="required">true</Property>
+      </PropertyDef>
+      <PropertyDef name="endTime">
+        <Property name="label">结束时间</Property>
+        <Property name="dataType">Date</Property>
+        <Property name="required">true</Property>
+      </PropertyDef>
+      <PropertyDef name="syearId">
+        <Property name="dataType">String</Property>
+        <Property name="label">年份</Property>
+        <Property name="required">false</Property>
+        <Validator type="length">
+          <Property name="maxLength">8</Property>
+          <Property name="resultMessage">所属学年不能多于八位</Property>
+        </Validator>
+      </PropertyDef>
+      <PropertyDef name="examCurrent">
+        <Property name="dataType">String</Property>
+        <Property name="label">考试状态</Property>
+        <Property name="mapping">
+          <Property name="mapValues">${dorado.getDataProvider(&quot;bdf.commonPR#findEnums&quot;).getResult(&quot;examcurrent&quot;)}</Property>
+          <Property name="keyProperty">name</Property>
+          <Property name="valueProperty">desc</Property>
+        </Property>
+        <Property name="defaultValue">2</Property>
+        <Property name="required">true</Property>
+      </PropertyDef>
+      <PropertyDef name="examType">
+        <Property name="dataType">String</Property>
+        <Property name="mapping">
+          <Property name="mapValues">${dorado.getDataProvider(&quot;bdf.commonPR#findEnums&quot;).getResult(&quot;examType&quot;)}</Property>
+          <Property name="keyProperty">name</Property>
+          <Property name="valueProperty">desc</Property>
+        </Property>
+        <Property name="label">考试类型</Property>
+        <Property name="required">true</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="TermBO">
+      <Property name="creationType">com.haiyisoft.entity.TermBO</Property>
+      <PropertyDef name="termId">
+        <Property name="dataType">String</Property>
+        <Property name="required">true</Property>
+        <Validator type="length">
+          <Property name="maxLength">20</Property>
+          <Property name="resultMessage">所属学期代码不能多余20位</Property>
+        </Validator>
+      </PropertyDef>
+      <PropertyDef name="termName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <Property name="title">ExamBO信息维护</Property>
+    <DataSet id="dataSetExamBO">
+      <Property name="dataProvider">examBOPR#queryExamBO</Property>
+      <Property name="pageSize">20</Property>
+      <Property name="dataType">[ExamBO]</Property>
+    </DataSet>
+    <DataSet id="dsExam">
+      <Property name="dataProvider">termBOPR#queryTermBO</Property>
+      <Property name="dataType">[TermBO]</Property>
+      <Property name="pageSize">20</Property>
+    </DataSet>
+    <UpdateAction id="actionUpdate">
+      <ClientEvent name="onFailure">arg.processDefault = false;&#xD;
+var dataset = this.get(&quot;#dataSetExamBO&quot;);&#xD;
+var message = arg.error.message;&#xD;
+var message = message.substring(0,3);&#xD;
+switch (message) {&#xD;
+	case &quot;Dup&quot;:{&#xD;
+		dorado.MessageBox.alert(&quot;该考试代码已存在！&quot;);&#xD;
+		break;&#xD;
+	}case &quot;Can&quot;:{&#xD;
+		dorado.MessageBox.alert(&quot;该考试代码已生成相关数据不能删除！&quot;);&#xD;
+		dataset.flushAsync();&#xD;
+		break;&#xD;
+	}&#xD;
+	default:{ &#xD;
+		arg.processDefault = true;&#xD;
+		//dorado.MessageBox.alert(&quot;数据存储发生错误请检查！&quot;);&#xD;
+	}&#xD;
+	}&#xD;
+</ClientEvent>
+      <ClientEvent name="onSuccess">var data=this.id(&quot;dataSetExamBO&quot;).flush();</ClientEvent>
+      <Property name="successMessage">保存成功!</Property>
+      <Property name="executingMessage">正在保存...</Property>
+      <Property name="dataResolver">examBOPR#saveExamBO</Property>
+      <UpdateItem>
+        <Property name="dataSet">dataSetExamBO</Property>
+      </UpdateItem>
+    </UpdateAction>
+    <UpdateAction id="actionUpdateModify">
+      <Property name="dataResolver">examBOPR#saveExamModBO</Property>
+      <Property name="executingMessage">正在修改...</Property>
+      <Property name="successMessage">修改成功</Property>
+      <UpdateItem>
+        <Property name="dataSet">dataSetExamBO</Property>
+      </UpdateItem>
+    </UpdateAction>
+    <ToolBar>
+      <DataPilot>
+        <ClientEvent name="onSubControlAction">var datas = this.get(&quot;#dataSetExamBO.data&quot;);&#xD;
+var examId = this.get(&quot;#dialogExamId&quot;);&#xD;
+var action = this.id(&quot;actionUpdate&quot;);&#xD;
+switch(arg.code){&#xD;
+	case &quot;+&quot;:{&#xD;
+		datas.insert();&#xD;
+		examId.set(&quot;readOnly&quot;,false);&#xD;
+		this.id(&quot;dialogExamBO&quot;).show();&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+	case &quot;-&quot;:{&#xD;
+		dorado.MessageBox.confirm(&quot;您真的想删除当前数据吗?&quot;,function(){&#xD;
+			datas.remove();&#xD;
+			action.execute();&#xD;
+		});&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+        <Property name="dataSet">dataSetExamBO</Property>
+        <Property name="itemCodes">pages,+,-,x</Property>
+      </DataPilot>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var data=this.get(&quot;#dataSetExamBO.data&quot;);&#xD;
+var examId = this.get(&quot;#dialogExamId&quot;);&#xD;
+if(data.current){&#xD;
+	examId.set(&quot;readOnly&quot;,true);&#xD;
+	this.id(&quot;dialogUpdateExamBO&quot;).show();&#xD;
+}else{&#xD;
+	dorado.MessageBox.alert(&quot;当前表没有信息可供编辑!&quot;);&#xD;
+}</ClientEvent>
+        <Property name="caption">修改</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -200px -0px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <Property name="caption">保存</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+        <Property name="action">examUpdate</Property>
+        <Property name="visible">false</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var data = this.get(&quot;#formCondition.entity&quot;);&#xD;
+with (this.get(&quot;#dataSetExamBO&quot;)){&#xD;
+	set(&quot;parameter&quot;, data);&#xD;
+	flushAsync();&#xD;
+}</ClientEvent>
+        <Property name="caption">查询</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -20px -40px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">view.get(&quot;#formCondition&quot;).set(&quot;entity&quot;,{});&#xD;
+</ClientEvent>
+        <Property name="caption">重置</Property>
+      </ToolBarButton>
+    </ToolBar>
+    <AutoForm id="formCondition">
+      <Property name="cols">*,*,*</Property>
+      <AutoFormElement id="formterm">
+        <Property name="name">term</Property>
+        <Property name="label">所属学期</Property>
+        <Property name="trigger">termDropDown</Property>
+        <Property name="property">term.termId</Property>
+        <Property name="editable">false</Property>
+        <Editor>
+          <TextEditor>
+            <Property name="mapping">
+              <Property name="keyProperty">termId</Property>
+              <Property name="valueProperty">termName</Property>
+              <Property name="mapValues">${dorado.getDataProvider(&quot;examBOPR#queryTermName&quot;).getResult()}</Property>
+            </Property>
+            <Property name="required">false</Property>
+          </TextEditor>
+        </Editor>
+      </AutoFormElement>
+      <AutoFormElement>
+        <Property name="name">examName</Property>
+        <Property name="label">考试名称</Property>
+        <Editor/>
+      </AutoFormElement>
+    </AutoForm>
+    <DataGrid>
+      <Property name="dataSet">dataSetExamBO</Property>
+      <Property name="dataType">ExamBO</Property>
+      <Property name="readOnly">true</Property>
+      <RowSelectorColumn/>
+      <DataColumn name="examId">
+        <Property name="property">examId</Property>
+        <Property name="resizeable">true</Property>
+        <Property name="caption">考试编号</Property>
+      </DataColumn>
+      <DataColumn name="examName">
+        <Property name="property">examName</Property>
+        <Property name="caption">考试名称</Property>
+      </DataColumn>
+      <DataColumn name="term">
+        <Property name="property">term.termName</Property>
+        <Property name="caption">所属学期</Property>
+        <Property name="dataType">TermBO</Property>
+      </DataColumn>
+      <DataColumn name="examType">
+        <Property name="property">examType</Property>
+      </DataColumn>
+      <DataColumn name="examCurrent">
+        <Property name="property">examCurrent</Property>
+        <Property name="caption">考试状态</Property>
+      </DataColumn>
+      <DataColumn name="beginTime">
+        <Property name="property">beginTime</Property>
+        <Property name="caption">开始时间</Property>
+      </DataColumn>
+      <DataColumn name="endTime">
+        <Property name="property">endTime</Property>
+        <Property name="caption">结束时间</Property>
+      </DataColumn>
+    </DataGrid>
+    <Dialog id="dialogExamBO">
+      <Property name="center">true</Property>
+      <Property name="width">600</Property>
+      <Property name="height">400</Property>
+      <Property name="modal">true</Property>
+      <Property name="closeable">false</Property>
+      <Property name="caption">数据编辑</Property>
+      <Buttons>
+        <Button>
+          <ClientEvent name="onClick">var actions = new dorado.widget.AjaxAction();&#xD;
+var dialog=this.id(&quot;dialogExamBO&quot;);&#xD;
+var action=this.id(&quot;actionUpdate&quot;);&#xD;
+var beginTime = view.get(&quot;#dataSetExamBO.data:#&quot;).get(&quot;beginTime&quot;);&#xD;
+var endTime = view.get(&quot;#dataSetExamBO.data:#&quot;).get(&quot;endTime&quot;);&#xD;
+actions.set(&quot;service&quot;,&quot;examBOPR#isValid&quot;).set(&quot;parameter&quot;,{&quot;beginTime&quot;:beginTime,&quot;endTime&quot;:endTime}).execute(function(result){&#xD;
+	if(result==&quot;1&quot;){&#xD;
+		dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+			action.execute(function(){&#xD;
+				dialog.hide();&#xD;
+			});&#xD;
+		})&#xD;
+	}else if(result==&quot;2&quot;){&#xD;
+		dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+			action.execute(function(){&#xD;
+				dialog.hide();&#xD;
+			});&#xD;
+		})&#xD;
+	}else{&#xD;
+		dorado.MessageBox.alert(&quot;开始时间应小于结束时间！&quot;);&#xD;
+	}&#xD;
+})&#xD;
+&#xD;
+&#xD;
+</ClientEvent>
+          <Property name="caption">确定</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+        </Button>
+        <Button>
+          <ClientEvent name="onClick">var data=this.id(&quot;dataSetExamBO&quot;).getData();&#xD;
+var dialog=this.id(&quot;dialogExamBO&quot;);&#xD;
+dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,function(){&#xD;
+	data.cancel();&#xD;
+	dialog.hide();&#xD;
+});</ClientEvent>
+          <Property name="caption">取消</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -40px -0px</Property>
+        </Button>
+      </Buttons>
+      <Children>
+        <AutoForm>
+          <Property name="dataSet">dataSetExamBO</Property>
+          <Property name="cols">*,*</Property>
+          <AutoFormElement name="examId">
+            <Property name="name">examId</Property>
+            <Property name="property">examId</Property>
+            <Property name="readOnly">false</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement name="examName">
+            <Property name="name">examName</Property>
+            <Property name="property">examName</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">term</Property>
+            <Property name="property">term.termId</Property>
+            <Property name="trigger">termDropDown</Property>
+            <Property name="label">学期</Property>
+            <Property name="editable">false</Property>
+            <Editor>
+              <TextEditor>
+                <Property name="mapping">
+                  <Property name="keyProperty">termId</Property>
+                  <Property name="valueProperty">termName</Property>
+                  <Property name="mapValues">${dorado.getDataProvider(&quot;examBOPR#queryTermName&quot;).getResult()}</Property>
+                </Property>
+                <Property name="required">true</Property>
+              </TextEditor>
+            </Editor>
+          </AutoFormElement>
+          <AutoFormElement name="examCurrent">
+            <Property name="name">examCurrent</Property>
+            <Property name="property">examCurrent</Property>
+            <Property name="editable">false</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">examType</Property>
+            <Property name="property">examType</Property>
+            <Property name="editable">false</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement name="beginTime">
+            <Property name="name">beginTime</Property>
+            <Property name="property">beginTime</Property>
+            <Property name="editable">false</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement name="endTime">
+            <Property name="name">endTime</Property>
+            <Property name="property">endTime</Property>
+            <Property name="editable">false</Property>
+            <Editor/>
+          </AutoFormElement>
+        </AutoForm>
+      </Children>
+      <Tools/>
+    </Dialog>
+    <Dialog id="dialogUpdateExamBO">
+      <Property name="caption">数据编辑</Property>
+      <Property name="center">true</Property>
+      <Property name="closeable">false</Property>
+      <Property name="height">400</Property>
+      <Property name="modal">true</Property>
+      <Property name="width">600</Property>
+      <Buttons>
+        <Button>
+          <ClientEvent name="onClick">var actions = new dorado.widget.AjaxAction();&#xD;
+var beginTime = view.get(&quot;#dataSetExamBO.data:#&quot;).get(&quot;beginTime&quot;);&#xD;
+var endTime = view.get(&quot;#dataSetExamBO.data:#&quot;).get(&quot;endTime&quot;);&#xD;
+var dialog=this.id(&quot;dialogUpdateExamBO&quot;); &#xD;
+var action=this.id(&quot;actionUpdateModify&quot;); &#xD;
+var dsExams=this.get(&quot;#dataSetExamBO&quot;); &#xD;
+actions.set(&quot;service&quot;,&quot;examBOPR#isValid&quot;).set(&quot;parameter&quot;,{&quot;beginTime&quot;:beginTime,&quot;endTime&quot;:endTime}).execute(function(result){&#xD;
+	if(result==&quot;1&quot;){&#xD;
+		dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,&#xD;
+		function(){ &#xD;
+		action.set(&quot;parameter&quot;, &#xD;
+		view.get(&quot;#editForm&quot;).get(&quot;entity&quot;)).execute(function()&#xD;
+		{ dialog.hide(); dsExams.flush(); }); })&#xD;
+	}else if(result==&quot;2&quot;){&#xD;
+		dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,&#xD;
+		function(){ &#xD;
+		action.set(&quot;parameter&quot;, &#xD;
+		view.get(&quot;#editForm&quot;).get(&quot;entity&quot;)).execute(function()&#xD;
+		{ dialog.hide(); dsExams.flush(); }); })&#xD;
+	}else{&#xD;
+		dorado.MessageBox.alert(&quot;开始时间应小于结束时间！&quot;);&#xD;
+	}&#xD;
+});</ClientEvent>
+          <Property name="caption">确定</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+        </Button>
+        <Button>
+          <ClientEvent name="onClick">var data=this.id(&quot;dataSetExamBO&quot;).getData();&#xD;
+var dialog=this.id(&quot;dialogUpdateExamBO&quot;);&#xD;
+dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,function(){&#xD;
+	data.cancel();&#xD;
+	dialog.hide();&#xD;
+});</ClientEvent>
+          <Property name="icon">url(>skin>common/icons.gif) -40px -0px</Property>
+          <Property name="caption">取消</Property>
+        </Button>
+      </Buttons>
+      <Children>
+        <AutoForm id="editForm">
+          <Property name="dataSet">dataSetExamBO</Property>
+          <Property name="cols">*,*</Property>
+          <AutoFormElement id="dialogExamId" name="examId">
+            <Property name="name">examId</Property>
+            <Property name="property">examId</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement name="examName">
+            <Property name="name">examName</Property>
+            <Property name="property">examName</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">term</Property>
+            <Property name="property">term.termId</Property>
+            <Property name="trigger">termDropDown</Property>
+            <Property name="label">学期</Property>
+            <Property name="editable">false</Property>
+            <Editor>
+              <TextEditor>
+                <Property name="mapping">
+                  <Property name="keyProperty">termId</Property>
+                  <Property name="valueProperty">termName</Property>
+                  <Property name="mapValues">${dorado.getDataProvider(&quot;examBOPR#queryTermName&quot;).getResult()}</Property>
+                </Property>
+                <Property name="required">true</Property>
+              </TextEditor>
+            </Editor>
+          </AutoFormElement>
+          <AutoFormElement name="examCurrent">
+            <Property name="name">examCurrent</Property>
+            <Property name="property">examCurrent</Property>
+            <Property name="editable">false</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">examType</Property>
+            <Property name="property">examType</Property>
+            <Property name="editable">false</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement name="beginTime">
+            <Property name="name">beginTime</Property>
+            <Property name="property">beginTime</Property>
+            <Property name="editable">false</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement name="endTime">
+            <Property name="name">endTime</Property>
+            <Property name="property">endTime</Property>
+            <Property name="editable">false</Property>
+            <Editor/>
+          </AutoFormElement>
+        </AutoForm>
+      </Children>
+      <Tools/>
+    </Dialog>
+    <DataSetDropDown id="dropDown">
+      <Property name="dataSet">dsExam</Property>
+      <Property name="displayProperty">termName</Property>
+      <Property name="property">termId</Property>
+      <Property name="useEmptyItem">true</Property>
+    </DataSetDropDown>
+    <DataSetDropDown id="termDropDown">
+      <Property name="dataSet">dsExam</Property>
+      <Property name="displayProperty">termName</Property>
+      <Property name="property">termId</Property>
+    </DataSetDropDown>
+    <DataSetDropDown id="dsddExam">
+      <Property name="dataSet">dsExam</Property>
+      <Property name="property">examId</Property>
+      <Property name="displayProperty">examName</Property>
+    </DataSetDropDown>
+  </View>
+</ViewConfig>

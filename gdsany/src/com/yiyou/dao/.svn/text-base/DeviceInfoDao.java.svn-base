@@ -1,0 +1,15 @@
+package com.yiyou.dao;
+
+import org.springframework.stereotype.Repository;
+import com.yiyou.utils.BaseDao;
+
+
+/**
+ * 设备信息持久化-层
+ * @author 张佰龙
+ * @日期 2013-8-10 17:26:21
+ */
+@Repository
+public class DeviceInfoDao extends BaseDao {
+
+}

@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="dtCustomer">
+      <Property name="creationType">com.yiyou.entity.CustomerInfo</Property>
+      <PropertyDef name="customer_id">
+        <Property name="dataType">long</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="helper_short">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="address">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="type">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="compete">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="aptitude">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="enter_time">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="enter_man">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="update_time">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="update_man">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="dtDevice">
+      <Property name="creationType">com.yiyou.entity.DeviceInfo</Property>
+      <PropertyDef name="device_id">
+        <Property name="dataType">long</Property>
+      </PropertyDef>
+      <PropertyDef name="brand">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="type">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="model">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="buy_time">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="price">
+        <Property name="dataType">float</Property>
+      </PropertyDef>
+      <PropertyDef name="remarks">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="customer_id">
+        <Property name="dataType">long</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsCustomer">
+      <Property name="dataType">[dtCustomer]</Property>
+      <Property name="dataProvider">customerInfoAction#getAll</Property>
+      <Property name="pageSize">10</Property>
+    </DataSet>
+    <DataSet id="dsDevice">
+      <Property name="pageSize">5</Property>
+      <Property name="dataProvider">deviceInfoAction#getAllById</Property>
+      <Property name="dataType">[dtDevice]</Property>
+      <Property name="parameter">1</Property>
+    </DataSet>
+    <ToolBar>
+      <DataPilot/>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var dl=this.get(&quot;#dlCustomerAdd&quot;);&#xD;
+var user=&quot;${loginUsername}&quot;;&#xD;
+this.get(&quot;#dsCustomer&quot;).getData().insert(&#xD;
+  {&#xD;
+  	enter_time:new Date(),&#xD;
+	update_time:new Date(),&#xD;
+	enter_man:user,&#xD;
+	update_man:user&#xD;
+  }&#xD;
+);&#xD;
+dl.show();&#xD;
+</ClientEvent>
+        <Property name="caption">新增</Property>
+      </ToolBarButton>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">&#xD;
+&#xD;
+var grid = view.get(&quot;#dgCustomer&quot;).get(&quot;selection&quot;);&#xD;
+if( grid == null || grid.length  == 0||grid.length>1 ){&#xD;
+	dorado.MessageBox.alert(&quot;请选择要1条修改的数据!&quot;);&#xD;
+	return;&#xD;
+}else{&#xD;
+    this.get(&quot;#dsCustomer&quot;).getData();&#xD;
+    this.get(&quot;#enter_time&quot;).set(&quot;readOnly&quot;,true);&#xD;
+    this.get(&quot;#enter_man&quot;).set(&quot;readOnly&quot;,true);&#xD;
+    this.get(&quot;#dlCustomerAdd&quot;).show();&#xD;
+}</ClientEvent>
+        <Property name="caption">修改</Property>
+      </ToolBarButton>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var grid = view.get(&quot;#dgCustomer&quot;).get(&quot;selection&quot;);&#xD;
+if( grid == null || grid.length  == 0 ){&#xD;
+	dorado.MessageBox.alert(&quot;请选择要删除的项!&quot;);&#xD;
+	return;&#xD;
+}else{&#xD;
+	dorado.MessageBox.confirm(&quot;你确定要删除吗?&quot;,function(){&#xD;
+		grid.slice(0).each(function(entity){  entity.remove();}); &#xD;
+		view.get(&quot;#uaCustomerAdd&quot;).execute();&#xD;
+	});&#xD;
+}</ClientEvent>
+        <Property name="caption">删除</Property>
+      </ToolBarButton>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var grid = view.get(&quot;#dgCustomer&quot;).get(&quot;selection&quot;);&#xD;
+var ds=this.get(&quot;#dsDevice&quot;);&#xD;
+ds.set(&quot;parameter&quot;,&quot;&quot;);&#xD;
+if( grid == null || grid.length  == 0||grid.length>1 ){&#xD;
+	dorado.MessageBox.alert(&quot;请选择要1条修改的数据!&quot;);&#xD;
+	return;&#xD;
+}else{&#xD;
+    var data=this.get(&quot;#dsCustomer&quot;).getData();&#xD;
+	//var entity=this.get(&quot;#afCustomerShow&quot;).get(&quot;entity&quot;);&#xD;
+&#xD;
+   var entity=this.get(&quot;#dgCustomer&quot;).get(&quot;selection&quot;); //返回的是数组&#xD;
+   dorado.MessageBox.alert(entity[0].get(&quot;customer_id&quot;));//取到值了&#xD;
+&#xD;
+   ds.set(&quot;parameter&quot;,entity[0].get(&quot;customer_id&quot;));&#xD;
+   this.get(&quot;#dlCustomerShow&quot;).show();&#xD;
+&#xD;
+}</ClientEvent>
+        <Property name="caption">视图</Property>
+      </ToolBarButton>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var era=this.get(&quot;#eraCustomer&quot;);&#xD;
+era.execute(function(result){&#xD;
+});&#xD;
+</ClientEvent>
+        <Property name="caption">导出报表</Property>
+      </ToolBarButton>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var action=this.get(&quot;#eraCustomer&quot;);&#xD;
+var dialog=this.get(&quot;#dialogSwfViewer&quot;);&#xD;
+//在服务端生成文件&#xD;
+action.set(&quot;autoDownload&quot;,false);&#xD;
+//文件类型为pdf&#xD;
+action.set(&quot;extension&quot;,&quot;pdf&quot;);&#xD;
+action.execute(function(result){&#xD;
+    dialog.show();&#xD;
+    var swfViewer=view.get(&quot;#sfvCustomer&quot;);&#xD;
+   //result包含文件id和name信息&#xD;
+    swfViewer.set(&quot;parameter&quot;,result);&#xD;
+   //export.pdf2swf 为内置的处理器&#xD;
+    swfViewer.set(&quot;handlerName&quot;,&quot;export.pdf2swf&quot;);&#xD;
+    swfViewer.refreshSwf();&#xD;
+});</ClientEvent>
+        <Property name="caption">在线演示</Property>
+      </ToolBarButton>
+    </ToolBar>
+    <DataGrid id="dgCustomer">
+      <Property name="dataSet">dsCustomer</Property>
+      <Property name="filterMode">serverSide</Property>
+      <Property name="showFilterBar">true</Property>
+      <Property name="readOnly">true</Property>
+      <Property name="selectionMode">multiRows</Property>
+      <Property name="highlightHoverRow">false</Property>
+      <Property name="highlightCurrentRow">false</Property>
+      <RowSelectorColumn/>
+      <DataColumn name="customer_id">
+        <Property name="property">customer_id</Property>
+        <Property name="caption">客户编号</Property>
+      </DataColumn>
+      <DataColumn name="name">
+        <Property name="property">name</Property>
+        <Property name="caption">客户姓名</Property>
+      </DataColumn>
+      <DataColumn name="helper_short">
+        <Property name="property">helper_short</Property>
+        <Property name="caption">助记简称</Property>
+      </DataColumn>
+      <DataColumn name="address">
+        <Property name="property">address</Property>
+        <Property name="caption">客户地址</Property>
+      </DataColumn>
+      <DataColumn name="type">
+        <Property name="property">type</Property>
+        <Property name="caption">客户类型</Property>
+      </DataColumn>
+      <DataColumn name="compete">
+        <Property name="property">compete</Property>
+        <Property name="caption">竞争性质</Property>
+      </DataColumn>
+      <DataColumn name="aptitude">
+        <Property name="property">aptitude</Property>
+        <Property name="caption">资质性质</Property>
+      </DataColumn>
+      <DataColumn name="enter_time">
+        <Property name="property">enter_time</Property>
+        <Property name="caption">录入时间</Property>
+      </DataColumn>
+      <DataColumn name="enter_man">
+        <Property name="property">enter_man</Property>
+        <Property name="caption">录入人</Property>
+      </DataColumn>
+      <DataColumn name="update_time">
+        <Property name="property">update_time</Property>
+        <Property name="caption">修改时间</Property>
+      </DataColumn>
+      <DataColumn name="update_man">
+        <Property name="property">update_man</Property>
+        <Property name="caption">修改人</Property>
+      </DataColumn>
+    </DataGrid>
+    <Dialog id="dlCustomerAdd">
+      <Property name="width">500</Property>
+      <Property name="center">true</Property>
+      <Property name="caption">新增→客户信息</Property>
+      <Property name="modal">true</Property>
+      <Buttons>
+        <Button>
+          <ClientEvent name="onClick">var action=this.get(&quot;#uaCustomerAdd&quot;);&#xD;
+var dl=this.get(&quot;#dlCustomerAdd&quot;);&#xD;
+action.execute(function(result){&#xD;
+	dl.hide();&#xD;
+});&#xD;
+</ClientEvent>
+          <Property name="caption">确定</Property>
+        </Button>
+        <Button>
+          <ClientEvent name="onClick">dorado.MessageBox.confirm(&quot;是否确定取消此操作？&quot;,function(){&#xD;
+	view.id(&quot;dsCustomer&quot;).getData(&quot;#&quot;).cancel();&#xD;
+	view.id(&quot;dlCustomerAdd&quot;).hide();&#xD;
+});</ClientEvent>
+          <Property name="caption">取消</Property>
+        </Button>
+      </Buttons>
+      <Children>
+        <AutoForm id="afCustomerAdd">
+          <Property name="dataType">dtCustomer</Property>
+          <Property name="dataSet">dsCustomer</Property>
+          <Property name="cols">480</Property>
+          <AutoFormElement id="customer_id">
+            <Property name="name">customer_id</Property>
+            <Property name="property">customer_id</Property>
+            <Property name="label">客户编号</Property>
+            <Property name="visible">false</Property>
+            <Property name="readOnly">true</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement id="name">
+            <Property name="name">name</Property>
+            <Property name="property">name</Property>
+            <Property name="label">客户姓名</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement id="helper_short">
+            <Property name="name">helper_short</Property>
+            <Property name="property">helper_short</Property>
+            <Property name="label">助记简称</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement id="address">
+            <Property name="name">address</Property>
+            <Property name="property">address</Property>
+            <Property name="label">客户地址</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement id="type">
+            <Property name="name">type</Property>
+            <Property name="property">type</Property>
+            <Property name="label">客户类型</Property>
+            <Editor>
+              <RadioGroup>
+                <RadioButton>
+                  <Property name="text">搅拌站</Property>
+                  <Property name="value">搅拌站</Property>
+                </RadioButton>
+                <RadioButton>
+                  <Property name="text">租赁</Property>
+                  <Property name="value">租赁</Property>
+                </RadioButton>
+                <RadioButton>
+                  <Property name="text">建筑公司</Property>
+                  <Property name="value">建筑公司</Property>
+                </RadioButton>
+                <RadioButton>
+                  <Property name="text">职能部门</Property>
+                  <Property name="value">职能部门</Property>
+                </RadioButton>
+                <RadioButton>
+                  <Property name="text">开发商</Property>
+                  <Property name="value">开发商</Property>
+                </RadioButton>
+              </RadioGroup>
+            </Editor>
+          </AutoFormElement>
+          <AutoFormElement id="compete">
+            <Property name="name">compete</Property>
+            <Property name="property">compete</Property>
+            <Property name="label">竞争性质</Property>
+            <Editor>
+              <RadioGroup>
+                <RadioButton>
+                  <Property name="text">有其他厂家产品，后购买其他厂家产品，近两年购买三一产品为主</Property>
+                  <Property name="value">有其他厂家产品，后购买其他厂家产品，近两年购买三一产品为主</Property>
+                </RadioButton>
+                <RadioButton>
+                  <Property name="text">纯三一客户</Property>
+                  <Property name="value">纯三一客户</Property>
+                </RadioButton>
+                <RadioButton>
+                  <Property name="text">先购买其他厂家产品，后购买三一产品，近两年购买三一产品为主</Property>
+                  <Property name="value">先购买其他厂家产品，后购买三一产品，近两年购买三一产品为主</Property>
+                </RadioButton>
+                <RadioButton>
+                  <Property name="text">先购买其他厂家产品，后购买三一产品，近一年购买三一产品为主</Property>
+                  <Property name="value">先购买其他厂家产品，后购买三一产品，近一年购买三一产品为主</Property>
+                </RadioButton>
+              </RadioGroup>
+            </Editor>
+          </AutoFormElement>
+          <AutoFormElement id="aptitude">
+            <Property name="name">aptitude</Property>
+            <Property name="property">aptitude</Property>
+            <Property name="label">资质性质</Property>
+            <Editor>
+              <RadioGroup>
+                <RadioButton>
+                  <Property name="text">公权</Property>
+                  <Property name="value">公权</Property>
+                </RadioButton>
+                <RadioButton>
+                  <Property name="text">股份(上市公司)</Property>
+                  <Property name="value">股份(上市公司)</Property>
+                </RadioButton>
+                <RadioButton>
+                  <Property name="text">民营(个体)</Property>
+                  <Property name="value">民营(个体)</Property>
+                </RadioButton>
+                <RadioButton>
+                  <Property name="text">民营(合股)</Property>
+                  <Property name="value">民营(合股)</Property>
+                </RadioButton>
+              </RadioGroup>
+            </Editor>
+          </AutoFormElement>
+          <AutoFormElement id="enter_time">
+            <Property name="name">enter_time</Property>
+            <Property name="property">enter_time</Property>
+            <Property name="label">录入时间</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement id="enter_man">
+            <Property name="name">enter_man</Property>
+            <Property name="property">enter_man</Property>
+            <Property name="label">录入人</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement id="update_time">
+            <Property name="name">update_time</Property>
+            <Property name="property">update_time</Property>
+            <Property name="label">修改时间</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement id="update_man">
+            <Property name="name">update_man</Property>
+            <Property name="property">update_man</Property>
+            <Property name="label">修改人</Property>
+            <Editor/>
+          </AutoFormElement>
+        </AutoForm>
+      </Children>
+      <Tools/>
+    </Dialog>
+    <UpdateAction id="uaCustomerAdd">
+      <Property name="dataResolver">customerInfoAction#saveCustomer</Property>
+      <Property name="executingMessage">正在保存....</Property>
+      <Property name="successMessage">保存成功！</Property>
+      <UpdateItem>
+        <Property name="dataSet">dsCustomer</Property>
+      </UpdateItem>
+    </UpdateAction>
+    <Export2ReportAction id="eraCustomer">
+      <Property name="template">dgCustomer</Property>
+      <Property name="titleName">客户档案信息</Property>
+      <Property name="dataScope">serverAll</Property>
+      <Property name="showTitle">true</Property>
+    </Export2ReportAction>
+    <Dialog id="dialogSwfViewer">
+      <Property name="center">true</Property>
+      <Property name="maximized">false</Property>
+      <Property name="maximizeable">true</Property>
+      <Property name="contentOverflowX">auto</Property>
+      <Property name="contentOverflowY">auto</Property>
+      <Property name="contentOverflow">auto</Property>
+      <Buttons/>
+      <Children>
+        <SwfViewer id="sfvCustomer"/>
+      </Children>
+      <Tools/>
+    </Dialog>
+    <Dialog id="dlCustomerShow">
+      <Property name="center">true</Property>
+      <Property name="maximizeable">true</Property>
+      <Property name="modal">true</Property>
+      <Property name="caption">客户→详细信息</Property>
+      <Property name="contentOverflow">scroll</Property>
+      <Property name="contentOverflowY">scroll</Property>
+      <Buttons/>
+      <Children>
+        <SplitPanel>
+          <Property name="direction">right</Property>
+          <Property name="position">400</Property>
+          <MainControl>
+            <Panel>
+              <Property name="caption">客户档案信息</Property>
+              <Buttons/>
+              <Children>
+                <Panel>
+                  <Property name="caption">客户基本信息</Property>
+                  <Property name="height">230</Property>
+                  <Buttons/>
+                  <Children>
+                    <AutoForm id="afCustomerShow">
+                      <Property name="dataType">dtCustomer</Property>
+                      <Property name="dataSet">dsCustomer</Property>
+                      <Property name="cols">300,300</Property>
+                      <Property name="colPadding">50</Property>
+                      <Property name="createPrivateDataSet">true</Property>
+                      <Property name="stretchWidth">true</Property>
+                      <AutoFormElement id="showCid">
+                        <Property name="name">customer_id</Property>
+                        <Property name="property">customer_id</Property>
+                        <Property name="label">客户编号</Property>
+                        <Property name="readOnly">true</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">name</Property>
+                        <Property name="property">name</Property>
+                        <Property name="label">客户名称</Property>
+                        <Property name="readOnly">true</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">helper_short</Property>
+                        <Property name="property">helper_short</Property>
+                        <Property name="readOnly">true</Property>
+                        <Property name="label">助记简称</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">address</Property>
+                        <Property name="property">address</Property>
+                        <Property name="label">客户地址</Property>
+                        <Property name="readOnly">true</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">type</Property>
+                        <Property name="property">type</Property>
+                        <Property name="readOnly">true</Property>
+                        <Property name="label">客户类型</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">compete</Property>
+                        <Property name="property">compete</Property>
+                        <Property name="label">竞争性质</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">aptitude</Property>
+                        <Property name="property">aptitude</Property>
+                        <Property name="label">资质性质</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">enter_time</Property>
+                        <Property name="property">enter_time</Property>
+                        <Property name="label">录入时间</Property>
+                        <Property name="readOnly">true</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">enter_man</Property>
+                        <Property name="property">enter_man</Property>
+                        <Property name="label">录入人</Property>
+                        <Property name="readOnly">true</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">update_time</Property>
+                        <Property name="property">update_time</Property>
+                        <Property name="label">修改时间</Property>
+                        <Property name="readOnly">true</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">update_man</Property>
+                        <Property name="property">update_man</Property>
+                        <Property name="label">修改人</Property>
+                        <Property name="readOnly">true</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                    </AutoForm>
+                  </Children>
+                  <Tools/>
+                </Panel>
+                <Panel id="pDevice">
+                  <ClientEvent name="onClick">&#xD;
+&#xD;
+</ClientEvent>
+                  <Property name="caption">设备信息</Property>
+                  <Property name="collapseable">true</Property>
+                  <Property name="height">300</Property>
+                  <Buttons/>
+                  <Children>
+                    <ToolBar>
+                      <DataPilot>
+                        <Property name="itemCodes">pages,-,,x</Property>
+                      </DataPilot>
+                      <Separator/>
+                      <ToolBarButton>
+                        <Property name="caption">新增</Property>
+                      </ToolBarButton>
+                    </ToolBar>
+                    <DataGrid>
+                      <Property name="dataSet">dsDevice</Property>
+                      <Property name="dataType">dtDevice</Property>
+                      <DataColumn name="device_id">
+                        <Property name="property">device_id</Property>
+                        <Property name="caption">设备编号</Property>
+                      </DataColumn>
+                      <DataColumn name="brand">
+                        <Property name="property">brand</Property>
+                        <Property name="caption">设备品牌</Property>
+                      </DataColumn>
+                      <DataColumn name="type">
+                        <Property name="property">type</Property>
+                        <Property name="caption">设备类型</Property>
+                      </DataColumn>
+                      <DataColumn name="model">
+                        <Property name="property">model</Property>
+                        <Property name="caption">设备型号</Property>
+                      </DataColumn>
+                      <DataColumn name="buy_time">
+                        <Property name="property">buy_time</Property>
+                        <Property name="caption">购买日期</Property>
+                      </DataColumn>
+                      <DataColumn name="price">
+                        <Property name="property">price</Property>
+                        <Property name="caption">购买价格</Property>
+                      </DataColumn>
+                      <DataColumn name="remarks">
+                        <Property name="property">remarks</Property>
+                        <Property name="caption">备注</Property>
+                      </DataColumn>
+                      <DataColumn name="customer_id">
+                        <Property name="property">customer_id</Property>
+                        <Property name="visible">false</Property>
+                      </DataColumn>
+                    </DataGrid>
+                  </Children>
+                  <Tools/>
+                </Panel>
+                <Panel>
+                  <Property name="caption">设备联系人信息</Property>
+                  <Property name="collapseable">true</Property>
+                  <Buttons/>
+                  <Children/>
+                  <Tools/>
+                </Panel>
+                <Panel>
+                  <Property name="caption">决策人信息</Property>
+                  <Property name="collapseable">true</Property>
+                  <Buttons/>
+                  <Children/>
+                  <Tools/>
+                </Panel>
+                <Panel>
+                  <Property name="caption">拜访记录</Property>
+                  <Property name="collapseable">true</Property>
+                  <Buttons/>
+                  <Children/>
+                  <Tools/>
+                </Panel>
+                <Panel>
+                  <Property name="caption">汇款情况</Property>
+                  <Property name="collapseable">true</Property>
+                  <Buttons/>
+                  <Children/>
+                  <Tools/>
+                </Panel>
+                <Panel>
+                  <Property name="caption">售后服务</Property>
+                  <Property name="closeable">false</Property>
+                  <Property name="collapseable">true</Property>
+                  <Buttons/>
+                  <Children/>
+                  <Tools/>
+                </Panel>
+              </Children>
+              <Tools/>
+            </Panel>
+          </MainControl>
+          <SideControl>
+            <Panel>
+              <Property name="caption">其他信息</Property>
+              <Property name="width">400</Property>
+              <Buttons/>
+              <Children>
+                <Panel>
+                  <Property name="caption">汇总信息</Property>
+                  <Property name="height">300</Property>
+                  <Property name="closeable">false</Property>
+                  <Property name="collapseable">true</Property>
+                  <Property name="width">400</Property>
+                  <Buttons/>
+                  <Children/>
+                  <Tools/>
+                </Panel>
+                <Panel>
+                  <Property name="caption">往来对账</Property>
+                  <Property name="height">300</Property>
+                  <Property name="collapseable">true</Property>
+                  <Property name="width">400</Property>
+                  <Buttons/>
+                  <Children/>
+                  <Tools/>
+                </Panel>
+                <Panel>
+                  <Property name="caption">下级客户</Property>
+                  <Property name="height">300</Property>
+                  <Property name="collapseable">true</Property>
+                  <Property name="width">400</Property>
+                  <Buttons/>
+                  <Children/>
+                  <Tools/>
+                </Panel>
+                <Panel>
+                  <Property name="caption">等等</Property>
+                  <Property name="collapseable">true</Property>
+                  <Property name="width">400</Property>
+                  <Buttons/>
+                  <Children/>
+                  <Tools/>
+                </Panel>
+              </Children>
+              <Tools/>
+            </Panel>
+          </SideControl>
+        </SplitPanel>
+      </Children>
+      <Tools/>
+    </Dialog>
+  </View>
+</ViewConfig>

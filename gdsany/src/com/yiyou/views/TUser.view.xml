@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="Tuser">
+      <Property name="creationType">com.topinfo.entity.Tuser</Property>
+      <PropertyDef name="userid">
+        <Property name="dataType">Integer</Property>
+      </PropertyDef>
+      <PropertyDef name="administrator">
+        <Property name="dataType">Boolean</Property>
+        <Property name="label">是否为管理员</Property>
+      </PropertyDef>
+      <PropertyDef name="username">
+        <Property name="dataType">String</Property>
+        <Property name="label">用户名</Property>
+        <Property name="required">true</Property>
+        <Validator type="ajax">
+          <Property name="service">tuserCRUD#userIsExits</Property>
+        </Validator>
+        <Validator type="length">
+          <Property name="minLength">4</Property>
+          <Property name="maxLength">20</Property>
+          <Property name="resultMessage">请输入4至20个字符的用户名</Property>
+        </Validator>
+      </PropertyDef>
+      <PropertyDef name="password">
+        <Property name="dataType">String</Property>
+        <Property name="label">用户密码</Property>
+        <Property name="required">true</Property>
+        <Validator type="length">
+          <Property name="resultMessage">请输入大于6至20个字符的密码</Property>
+          <Property name="minLength">6</Property>
+          <Property name="maxLength">20</Property>
+        </Validator>
+      </PropertyDef>
+      <PropertyDef name="ename">
+        <Property name="dataType">String</Property>
+        <Property name="label">英文名</Property>
+      </PropertyDef>
+      <PropertyDef name="cname">
+        <Property name="dataType">String</Property>
+        <Property name="label">中文名</Property>
+        <Validator type="length">
+          <Property name="minLength">4</Property>
+          <Property name="maxLength">20</Property>
+          <Property name="resultMessage">请输入4至20位字符的中文用户名</Property>
+        </Validator>
+      </PropertyDef>
+      <PropertyDef name="createtime">
+        <Property name="dataType">Date</Property>
+        <Property name="label">创建时间</Property>
+        <Property name="required">true</Property>
+      </PropertyDef>
+      <PropertyDef name="status">
+        <ClientEvent name="onGet">alert(0);</ClientEvent>
+        <Property name="dataType">Long</Property>
+        <Property name="label">用户状态</Property>
+      </PropertyDef>
+      <PropertyDef name="userdept">
+        <Property name="dataType">String</Property>
+        <Property name="label">所属部门</Property>
+      </PropertyDef>
+      <PropertyDef name="userphone">
+        <Property name="dataType">String</Property>
+        <Property name="label">固定电话</Property>
+        <Property name="required">true</Property>
+        <Validator type="regExp">
+          <Property name="whiteRegExp">(\(\d{3,4}\)|\d{3,4}-|\s)?\d{8}</Property>
+          <Property name="validateMode">whiteBlack</Property>
+          <Property name="resultMessage">请输入正确的电话号码[座机]</Property>
+        </Validator>
+      </PropertyDef>
+      <PropertyDef name="usermobile">
+        <Property name="dataType">String</Property>
+        <Property name="label">手机号码</Property>
+        <Property name="required">true</Property>
+        <Validator type="length">
+          <Property name="resultMessage">请输入11位的手机号码</Property>
+          <Property name="minLength">11</Property>
+          <Property name="maxLength">11</Property>
+        </Validator>
+      </PropertyDef>
+      <PropertyDef name="usermail">
+        <Property name="dataType">String</Property>
+        <Property name="label">电子邮件</Property>
+      </PropertyDef>
+      <PropertyDef name="userrole">
+        <Property name="dataType">String</Property>
+        <Property name="label">用户角色</Property>
+      </PropertyDef>
+      <PropertyDef name="type">
+        <Property name="mapping">
+          <Property name="mapValues"/>
+        </Property>
+        <Property name="label">用户类型</Property>
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <ToolBar>
+      <DataPilot>
+        <Property name="dataSet">dsTuser</Property>
+        <Property name="itemCodes">pages,pageSize,x</Property>
+      </DataPilot>
+      <ToolBarButton id="addTuser">
+        <ClientEvent name="onClick">this.get(&quot;#dsTuser&quot;).getData().insert({createtime:new Date()});&#xD;
+this.get(&quot;#dladdTuser&quot;).show();&#xD;
+</ClientEvent>
+        <Property name="caption">新增用户</Property>
+        <Property name="icon"> url(>skin>common/icons.gif) -120px -0px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">this.get(&quot;#dsTuser&quot;).getData();&#xD;
+this.get(&quot;#dladdTuser&quot;).show();&#xD;
+</ClientEvent>
+        <Property name="icon"> url(>skin>common/icons.gif) -200px -0px</Property>
+        <Property name="caption">修改</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var grid = view.get(&quot;#grid&quot;).get(&quot;selection&quot;);&#xD;
+if( grid == null || grid.length  == 0 ){&#xD;
+	dorado.MessageBox.alert(&quot;请选择要删除的项!&quot;);&#xD;
+	return;&#xD;
+}else{&#xD;
+	dorado.MessageBox.confirm(&quot;你确定要删除吗?&quot;,function(){&#xD;
+		grid.slice(0).each(function(entity){  entity.remove();}); &#xD;
+		view.get(&quot;#updateTuser&quot;).execute();&#xD;
+	});&#xD;
+}&#xD;
+</ClientEvent>
+        <Property name="caption">删除</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -140px -0px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var user  = view.id(&quot;dsTuser&quot;).getData(&quot;#&quot;);&#xD;
+if(user){&#xD;
+	var username = user.get(&quot;username&quot;);&#xD;
+	dorado.MessageBox.confirm(&quot;确定要重置用户&quot;+username+&quot;密码么?&quot;,function(){&#xD;
+		view.id(&quot;ajaxActionResetPassword&quot;).set(&quot;parameter&quot;,username).execute(function(password){&#xD;
+			dorado.MessageBox.alert(username+&quot;密码已重置,新密码为：&quot;+password);&#xD;
+		});&#xD;
+	});&#xD;
+}else{&#xD;
+	dorado.MessageBox.alert(&quot;请选择用户信息!&quot;);&#xD;
+}</ClientEvent>
+        <Property name="caption">重置密码</Property>
+        <Property name="icon"> url(>skin>common/icons.gif) -180px -180px</Property>
+      </ToolBarButton>
+    </ToolBar>
+    <DataSet id="dsTuser">
+      <Property name="dataType">[Tuser]</Property>
+      <Property name="dataProvider">tuserCRUD#getAll</Property>
+      <Property name="pageSize">10</Property>
+    </DataSet>
+    <DataGrid id="grid">
+      <Property name="dataSet">dsTuser</Property>
+      <Property name="filterMode">serverSide</Property>
+      <Property name="showFilterBar">true</Property>
+      <Property name="readOnly">true</Property>
+      <Property name="selectionMode">multiRows</Property>
+      <RowSelectorColumn/>
+      <DataColumn name="username">
+        <Property name="property">username</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="ename">
+        <Property name="property">ename</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="cname">
+        <Property name="property">cname</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="createtime">
+        <Property name="property">createtime</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="status">
+        <Property name="property">status</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="type">
+        <Property name="property">type</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="userdept">
+        <Property name="property">userdept</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="userphone">
+        <Property name="property">userphone</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="usermobile">
+        <Property name="property">usermobile</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="usermail">
+        <Property name="property">usermail</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="userrole">
+        <Property name="property">userrole</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="administrator">
+        <Property name="property">administrator</Property>
+        <Property name="align">center</Property>
+        <Property name="filterable">false</Property>
+      </DataColumn>
+    </DataGrid>
+    <UpdateAction id="updateTuser">
+      <Property name="dataResolver">tuserCRUD#saveUsers</Property>
+      <Property name="executingMessage">正在保存、、、</Property>
+      <Property name="successMessage">保存成功</Property>
+      <UpdateItem>
+        <Property name="dataSet">dsTuser</Property>
+        <Property name="submitSimplePropertyOnly">false</Property>
+      </UpdateItem>
+    </UpdateAction>
+    <Dialog id="dladdTuser">
+      <Property name="center">true</Property>
+      <Property name="caption">用户信息-添加</Property>
+      <Property name="width">450</Property>
+      <Property name="modal">true</Property>
+      <Buttons>
+        <Button>
+          <ClientEvent name="onClick">var action = this.get(&quot;#updateTuser&quot;);&#xD;
+var form = this.get(&quot;#adaddTuser&quot;);&#xD;
+action.set(&quot;parameter&quot;,form).execute(function(result){&#xD;
+	this.get(&quot;#dladdTuser&quot;).hide();&#xD;
+});&#xD;
+</ClientEvent>
+          <Property name="caption">保存</Property>
+          <Property name="icon"> url(>skin>common/icons.gif) -140px -20px</Property>
+        </Button>
+        <Button>
+          <ClientEvent name="onClick">dorado.MessageBox.confirm(&quot;是否确定取消此操作？&quot;,function(){&#xD;
+	view.id(&quot;dsTuser&quot;).getData(&quot;#&quot;).cancel();&#xD;
+	view.id(&quot;dladdTuser&quot;).hide();&#xD;
+});&#xD;
+</ClientEvent>
+          <Property name="icon"> url(>skin>common/icons.gif) -280px -220px</Property>
+          <Property name="caption">取消</Property>
+        </Button>
+      </Buttons>
+      <Children>
+        <AutoForm id="afaddTuser">
+          <Property name="dataSet">dsTuser</Property>
+          <Property name="dataType">Tuser</Property>
+          <AutoFormElement>
+            <Property name="name">username</Property>
+            <Property name="property">username</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">password</Property>
+            <Property name="property">password</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">ename</Property>
+            <Property name="property">ename</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">cname</Property>
+            <Property name="property">cname</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">createtime</Property>
+            <Property name="property">createtime</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">type</Property>
+            <Property name="property">type</Property>
+            <Property name="trigger">listDropDownTuser</Property>
+            <Property name="userData"/>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">userdept</Property>
+            <Property name="property">userdept</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">userphone</Property>
+            <Property name="property">userphone</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">usermobile</Property>
+            <Property name="property">usermobile</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">usermail</Property>
+            <Property name="property">usermail</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">userrole</Property>
+            <Property name="property">userrole</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement id="administrator">
+            <ClientEvent name="onClick">//dorado.MessageBox.alert(view.get(&quot;#administrator.value&quot;));&#xD;
+</ClientEvent>
+            <Property name="name">administrator</Property>
+            <Property name="property">administrator</Property>
+            <Property name="label">是否为管理员</Property>
+            <Property name="dataSet">dsTuser</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement id="status">
+            <Property name="name">status</Property>
+            <Property name="property">status</Property>
+            <Property name="editorType">CheckBox</Property>
+            <Property name="label">是否可用</Property>
+            <Editor/>
+          </AutoFormElement>
+        </AutoForm>
+      </Children>
+      <Tools/>
+    </Dialog>
+    <AjaxAction id="ajaxActionCheckUserIsExists">
+      <Property name="service">tuserCRUD#userIsExits</Property>
+    </AjaxAction>
+    <ListDropDown id="listDropDownTuser">
+      <Property name="items">能源活动,工业生产过程,农业,土地利用变化和林业,废弃物处理</Property>
+    </ListDropDown>
+    <AjaxAction id="ajaxActionResetPassword">
+      <Property name="service">tuserCRUD#resetPassword</Property>
+    </AjaxAction>
+  </View>
+</ViewConfig>

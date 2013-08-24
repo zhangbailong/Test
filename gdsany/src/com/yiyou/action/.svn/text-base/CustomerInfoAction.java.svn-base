@@ -1,0 +1,26 @@
+package com.yiyou.action;
+
+import java.util.Collection;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Component;
+
+import com.bstek.dorado.annotation.DataProvider;
+import com.yiyou.dao.CustomerInfoDao;
+import com.yiyou.entity.CustomerInfo;
+
+
+@Component
+public class CustomerInfoAction {
+
+	@Resource
+	private CustomerInfoDao customerDao;	
+	
+	@DataProvider
+	public Collection<CustomerInfo> getAll()
+	{
+		return customerDao.findAll(CustomerInfo.class);
+	}
+	
+}

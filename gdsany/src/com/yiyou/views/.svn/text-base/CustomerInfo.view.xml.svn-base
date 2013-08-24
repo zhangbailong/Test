@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="dtCustomer">
+      <Property name="creationType">com.yiyou.entity.CustomerInfo</Property>
+      <PropertyDef name="customer_id">
+        <Property name="dataType">long</Property>
+      </PropertyDef>
+      <PropertyDef name="customer_name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="helper_short">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="custome_raddress">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="customer_type">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="customer_compete">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="customer_aptitude">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="enter_time">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="enter_man">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="update_time">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="update_man">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsCustomer">
+      <Property name="dataType">[dtCustomer]</Property>
+      <Property name="dataProvider">customerInfoAction#getAll</Property>
+    </DataSet>
+    <DataGrid>
+      <Property name="dataSet">dsCustomer</Property>
+      <DataColumn name="customer_id">
+        <Property name="property">customer_id</Property>
+      </DataColumn>
+      <DataColumn name="customer_name">
+        <Property name="property">customer_name</Property>
+      </DataColumn>
+      <DataColumn name="helper_short">
+        <Property name="property">helper_short</Property>
+      </DataColumn>
+      <DataColumn name="custome_raddress">
+        <Property name="property">custome_raddress</Property>
+      </DataColumn>
+      <DataColumn name="customer_type">
+        <Property name="property">customer_type</Property>
+      </DataColumn>
+      <DataColumn name="customer_compete">
+        <Property name="property">customer_compete</Property>
+      </DataColumn>
+      <DataColumn name="customer_aptitude">
+        <Property name="property">customer_aptitude</Property>
+      </DataColumn>
+      <DataColumn name="enter_time">
+        <Property name="property">enter_time</Property>
+      </DataColumn>
+      <DataColumn name="enter_man">
+        <Property name="property">enter_man</Property>
+      </DataColumn>
+      <DataColumn name="update_time">
+        <Property name="property">update_time</Property>
+      </DataColumn>
+      <DataColumn name="update_man">
+        <Property name="property">update_man</Property>
+      </DataColumn>
+    </DataGrid>
+  </View>
+</ViewConfig>

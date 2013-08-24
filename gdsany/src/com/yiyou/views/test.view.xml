@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model/>
+  <View>
+    <AutoForm>
+      <AutoFormElement>
+        <Editor/>
+      </AutoFormElement>
+      <AutoFormElement>
+        <Editor/>
+      </AutoFormElement>
+      <AutoFormElement layoutConstraint="colSpan:2">
+        <Editor/>
+      </AutoFormElement>
+      <AutoFormElement>
+        <Editor/>
+      </AutoFormElement>
+      <AutoFormElement>
+        <Editor/>
+      </AutoFormElement>
+      <AutoFormElement>
+        <Editor/>
+      </AutoFormElement>
+    </AutoForm>
+  </View>
+</ViewConfig>

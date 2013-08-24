@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="dtLinkMan">
+      <Property name="creationType">com.yiyou.entity.DeviceLinkMan</Property>
+      <PropertyDef name="linkman_id">
+        <Property name="dataType">long</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="role">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="phone">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="email">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsLinkMan">
+      <Property name="dataType">[dtLinkMan]</Property>
+      <Property name="dataProvider">linkManAction#getAll</Property>
+      <Property name="pageSize">10</Property>
+    </DataSet>
+    <ToolBar>
+      <DataPilot>
+        <Property name="itemCodes">pages,+,-,x</Property>
+      </DataPilot>
+    </ToolBar>
+    <DataGrid>
+      <Property name="dataSet">dsLinkMan</Property>
+      <DataColumn name="linkman_id">
+        <Property name="property">linkman_id</Property>
+        <Property name="caption">设备联系人编号</Property>
+      </DataColumn>
+      <DataColumn name="name">
+        <Property name="property">name</Property>
+        <Property name="caption">联系人姓名</Property>
+      </DataColumn>
+      <DataColumn name="role">
+        <Property name="property">role</Property>
+        <Property name="caption">角色</Property>
+      </DataColumn>
+      <DataColumn name="phone">
+        <Property name="property">phone</Property>
+        <Property name="caption">手机</Property>
+      </DataColumn>
+      <DataColumn name="email">
+        <Property name="property">email</Property>
+        <Property name="caption">邮箱</Property>
+      </DataColumn>
+    </DataGrid>
+  </View>
+</ViewConfig>
